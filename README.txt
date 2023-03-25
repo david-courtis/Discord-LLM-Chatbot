@@ -19,5 +19,4 @@ API_KEY=<your openai api key>
 
 
 #### Notes:
-* This repo has heroku deployment files.
 * This bot is not meant to be used in a production environment, it's just a 2 hour fun coding project.
