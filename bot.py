@@ -5,7 +5,11 @@ import openai
 import json
 from dotenv import load_dotenv
 
-load_dotenv()
+try:
+	load_dotenv()
+except:
+	print("No .env file found")
+
 TOKEN = os.getenv('DISCORD_TOKEN')
 API_KEY = os.getenv('API_KEY')
 openai.api_key = API_KEY
