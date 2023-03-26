@@ -3,6 +3,7 @@ import logging
 import discord
 import openai
 import json
+import re
 from dotenv import load_dotenv
 
 try:
@@ -20,13 +21,12 @@ class MyClient(discord.Client):
 
 	async def on_ready(self):
 		self.cache = {}
-		self.replyto = ["why", "what", "how", "when", "?", "wtf", "idk", "huh"]
+		self.replyto = ["why", "what", "how", "?", "wtf", "idk", "huh"]
+		self.threshold = 5000
+		self.send_limit = 2001
 		print(f'Logged on as {self.user}!')
 
 	async def on_message(self, message):
-
-		if message.author == self.user:
-			return
 
 		print(f'Message from {message.author}, {message.guild}, {message.channel}: {message.content}')
 		# get server
@@ -42,30 +42,43 @@ class MyClient(discord.Client):
 
 		if mentioned:
 			message.content = message.content.replace(f'<@{client.user.id}>', '')
-			print(message.content)
 
-		# save message and time (to the second) to cache
-		self.cache[serverchannel].append([message.created_at,message.author,message.content,message.reference])
+		# save message and time (to the second) to cache, also save the name of the person it was replying to
+		self.cache[serverchannel].append([message.created_at,message.author,message.content,message.reference.resolved.author if message.reference is not None and message.reference.resolved is not None else None])
+
+		if message.author == self.user:
+			return
 
 		numCharsCached = sum([len(message[2]) for message in self.cache[serverchannel]])
 
 		# if waiting for reply, don't send message to gpt-3
-		if numCharsCached > 4000 or mentioned or any([word in message.content.lower() for word in self.replyto]):
-			print("Sending...")
-			messages = [{"role": "system", "content": "You are a normal human being, assume you are in conversation and you're casual and close. Don't Be formal. Don't mention their %USERNAME"}]
+		if numCharsCached > self.threshold or mentioned or any([word in message.content.lower() for word in self.replyto]):
+
+			while numCharsCached > self.send_limit:
+				numCharsCached -= len(self.cache[serverchannel][0][2])
+				self.cache[serverchannel].pop(0)
+			print(numCharsCached)
+
+			print(f'----Sending {numCharsCached} Chars----')
+			messages = [{"role": "system", "content": "You are a normal human being called ViViV2#5153, assume you are in conversation and you're casual and close. Don't Be formal. Don't mention %USERNAME"}]
 			messages.append({"role": "user", "content": "%USERNAME said %COMMAND %replying to %USERNAME%"})
-			for item in self.cache[serverchannel][-15:]:
+			for item in self.cache[serverchannel]:
 				if item[3] is not None:
 					messages.append({"role": "user", "content": f'{item[1]} said {item[2]} replying to {item[3]}'})
 				else:
 					messages.append({"role": "user", "content": f'{item[1]} said {item[2]}'})
 			response = send_message(messages)
-			self.cache[serverchannel] = []
-			print(response["choices"][0]["message"]["content"])
+			text = response["choices"][0]["message"]["content"]
+			# remove %USERNAME "anything" space in regex
+			text = re.sub(r"ViViV2(#5153)?\s?[^\s]*\s?", "", text)
+			# remove %(replying to *)%
+			text = re.sub(r"(r|R)eplying to\s?.*", "", text)
+			print(text)
+
 			if mentioned:
-				await message.channel.send(response["choices"][0]["message"]["content"], reference=message)
+				await message.channel.send(text, reference=message)
 			else:
-				await message.channel.send(response["choices"][0]["message"]["content"])
+				await message.channel.send(text)
 			
 		
 
