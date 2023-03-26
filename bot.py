@@ -1,9 +1,11 @@
+from datetime import datetime
 import os
 import logging
 import discord
 import openai
 import json
 import re
+import uwuify
 from dotenv import load_dotenv
 
 try:
@@ -23,11 +25,11 @@ class MyClient(discord.Client):
 		self.cache = {}
 		self.replyto = ["why", "what", "how", "?", "wtf", "idk", "huh"]
 		self.threshold = 5000
-		self.send_limit = 2001
+		self.send_limit = 1200
+		self.uwuify = True
 		print(f'Logged on as {self.user}!')
 
 	async def on_message(self, message):
-
 		print(f'Message from {message.author}, {message.guild}, {message.channel}: {message.content}')
 		# get server
 		serverchannel = str(message.guild) + str(message.channel)
@@ -44,43 +46,65 @@ class MyClient(discord.Client):
 			message.content = message.content.replace(f'<@{client.user.id}>', '')
 
 		# save message and time (to the second) to cache, also save the name of the person it was replying to
-		self.cache[serverchannel].append([message.created_at,message.author,message.content,message.reference.resolved.author if message.reference is not None and message.reference.resolved is not None else None])
-
+		
 		if message.author == self.user:
 			return
+	
+		self.cache[serverchannel].append([message.created_at,message.author,message.content,message.reference.resolved.author if message.reference is not None and message.reference.resolved is not None else None])
 
 		numCharsCached = sum([len(message[2]) for message in self.cache[serverchannel]])
 
 		# if waiting for reply, don't send message to gpt-3
-		if numCharsCached > self.threshold or mentioned or any([word in message.content.lower() for word in self.replyto]):
+		if mentioned or ((numCharsCached > self.threshold or any([word in message.content.lower() for word in self.replyto])) and int(message.channel.id) == 894807066953285673):
 
 			while numCharsCached > self.send_limit:
 				numCharsCached -= len(self.cache[serverchannel][0][2])
 				self.cache[serverchannel].pop(0)
-			print(numCharsCached)
 
 			print(f'----Sending {numCharsCached} Chars----')
-			messages = [{"role": "system", "content": "You are a normal human being called ViViV2#5153, assume you are in conversation and you're casual and close. Don't Be formal. Don't mention %USERNAME"}]
-			messages.append({"role": "user", "content": "%USERNAME said %COMMAND %replying to %USERNAME%"})
+			messages = [{"role": "system", "content": "You (ViViV2) are a normal human being, assume you are in conversation and you're casual and close. Don't Be formal"}]
+			messages.append({"role": "user", "content": "%USERNAME said %COMMAND%"})
 			for item in self.cache[serverchannel]:
 				if item[3] is not None:
-					messages.append({"role": "user", "content": f'{item[1]} said {item[2]} replying to {item[3]}'})
+					messages.append({"role": "user", "content": f'{item[1]} said {item[2]} (replying to {item[3]})'})
 				else:
 					messages.append({"role": "user", "content": f'{item[1]} said {item[2]}'})
+			
 			response = send_message(messages)
+
 			text = response["choices"][0]["message"]["content"]
+
 			# remove %USERNAME "anything" space in regex
-			text = re.sub(r"ViViV2(#5153)?\s?[^\s]*\s?", "", text)
+			text = re.sub(r"(v|V)i(v|V)i(v|V)2(#5153)?\s?[^\s]*\s?", "", text)
 			# remove %(replying to *)%
-			text = re.sub(r"(r|R)eplying to\s?.*", "", text)
-			print(text)
+			text = re.sub(r".(r|R)eplying to\s?.*", "", text)
+			# remove digits
+			text = re.sub(r"#[0-9][0-9][0-9][0-9]", "", text)
+
+			uwud = uwuify_text(text, self.uwuify)
+
+			time = datetime.now()
 
 			if mentioned:
-				await message.channel.send(text, reference=message)
+				self.cache[serverchannel].append([time,client.user,text,message.author])
+				await message.channel.send(uwud[:2000], reference=message)
 			else:
-				await message.channel.send(text)
-			
-		
+				self.cache[serverchannel].append([time,client.user,text,None])
+				await message.channel.send(uwud[:2000])
+
+def uwuify_text(text, change):
+	if change:
+		flags = uwuify.SMILEY | uwuify.YU | uwuify.STUTTER
+
+		try:
+			uwud = uwuify.uwu(text, flags = flags) # sometimes uwuify fails, library is not perfect
+		except:
+			uwud = text
+	else:
+		uwud = text
+
+	return uwud
+
 
 def send_message(messages):
 	# send message to gpt-3
