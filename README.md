@@ -4,6 +4,8 @@ A discord bot that uses cGPT-3.5 to generate responses to messages.
 
 ## Capabilities:
 
+This list is outdated and needs to be updated (WIP) (12/13/2024)
+
 * Will reply to a message mentioning the bot.
 * Will reply to any message that has a "why", "what", "how", "?", "wtf", "idk", "huh".
 * Has 2000 characters of memory per channel.
