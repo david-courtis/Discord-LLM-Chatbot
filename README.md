@@ -1,6 +1,6 @@
 # cGPT Discord Bot v1.0
 
-A discord bot that uses cGPT-3.5 to generate responses to messages.
+A discord bot that uses GPT-4o-mini to generate responses to messages.
 
 ## Capabilities:
 
