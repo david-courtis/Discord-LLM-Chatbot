@@ -1,12 +1,16 @@
 from discord.ext import commands
 
+
 class CommandHandler:
     def __init__(self, bot):
         self.bot = bot
 
     def setup_commands(self):
         """Sets up bot commands."""
-        @self.bot.hybrid_command(name="clear", description="Forget conversation history in the channel")
+
+        @self.bot.hybrid_command(
+            name="clear", description="Forget conversation history in the channel"
+        )
         async def clear_cache(ctx):
             await self.clear_cache(ctx)
 
@@ -25,16 +29,18 @@ class CommandHandler:
             self.cache[server_channel] = []
             await ctx.reply("I have suddenly developed amnesia, UwU!", ephemeral=False)
         else:
-            await ctx.reply("No history found for this channel, b-baka!", ephemeral=False)
+            await ctx.reply(
+                "No history found for this channel, b-baka!", ephemeral=False
+            )
 
     async def sync_commands(self, ctx: commands.Context):
         """Syncs slash commands."""
         if str(ctx.author.id) == self.config.OWNER_ID:
             await self.tree.sync()
-            await ctx.send('Command tree synced.')
+            await ctx.send("Command tree synced.")
         else:
-            await ctx.send('You must be the owner to use this command!')
+            await ctx.send("You must be the owner to use this command!")
 
     async def say_creator(self, ctx: commands.Context):
         """Sends a message with the bot creator's info."""
-        await ctx.send(f'I was created by <@!{ self.config.OWNER_ID}>!')
+        await ctx.send(f"I was created by <@!{ self.config.OWNER_ID}>!")

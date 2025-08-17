@@ -1,9 +1,11 @@
 # utils/openai_client.py
-from openai import OpenAI
-from typing import List, Dict
 import time
+from typing import Dict, List
+
+from openai import OpenAI
 
 from ..config.config import Config
+
 
 class OpenAIClient:
     def __init__(self, config: Config):
@@ -16,8 +18,7 @@ class OpenAIClient:
         for _ in range(3):
             try:
                 response = self.client.chat.completions.create(
-                    model="gpt-4o-mini",
-                    messages=messages
+                    model="gpt-4o-mini", messages=messages
                 )
                 return response.choices[0].message.content
             except Exception as e:

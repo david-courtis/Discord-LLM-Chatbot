@@ -1,5 +1,6 @@
 # main.py
 import asyncio
+
 from .bot.bot import MyBot
 from .config.config import load_config
 from .utils.logger import setup_logger

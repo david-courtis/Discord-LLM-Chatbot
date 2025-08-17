@@ -1,8 +1,10 @@
 # config/config.py
+import os
 from dataclasses import dataclass
 from typing import List
-import os
+
 from dotenv import load_dotenv
+
 
 @dataclass
 class Config:
@@ -13,12 +15,13 @@ class Config:
     OWNER_ID: str
     LOCAL_CLIENT_URL: str
     MODEL_NAME: str
-    
+
     # Bot specific configs
     ACTIVITY_TIMER: int = 300
     DISCORD_CHARACTER_LIMIT: int = 2000
     MESSAGE_THRESHOLD: int = 5000
     SEND_LIMIT: int = 10000
+
 
 def load_config() -> Config:
     try:
@@ -28,13 +31,17 @@ def load_config() -> Config:
 
     try:
         return Config(
-            DISCORD_TOKEN=os.getenv('DISCORD_TOKEN'),
-            OPENAI_API_KEY=os.getenv('OPENAI_API_KEY'),
-            DESIGNATED_CHANNELS=[int(channel.strip()) for channel in os.getenv("DESIGNATED_CHANNELS").split(",")],
+            DISCORD_TOKEN=os.getenv("DISCORD_TOKEN"),
+            OPENAI_API_KEY=os.getenv("OPENAI_API_KEY"),
+            DESIGNATED_CHANNELS=[
+                int(channel.strip())
+                for channel in os.getenv("DESIGNATED_CHANNELS").split(",")
+                if channel.strip()
+            ],
             GUILD_TEST_ID=os.getenv("GUILD_TEST_ID"),
             OWNER_ID=os.getenv("OWNER_ID"),
             LOCAL_CLIENT_URL=os.getenv("LOCAL_CLIENT_URL", ""),
-            MODEL_NAME=os.getenv("MODEL_NAME")
+            MODEL_NAME=os.getenv("MODEL_NAME"),
         )
     except (KeyError, AttributeError) as e:
         raise ValueError(f"Missing required environment variables: {str(e)}")

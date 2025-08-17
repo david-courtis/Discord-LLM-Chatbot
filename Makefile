@@ -16,6 +16,8 @@ install: ## Install/update necessary Python packages
 	poetry install
 
 start: install ## Start the Discord bot
+	@echo "Checking environment..."
+	make check-env
 	@echo "Starting the Discord LLM Chatbot..."
 	poetry run start
 
@@ -47,7 +49,12 @@ help: ## Show this help message
 	@echo ""
 	@echo "$(GREEN)Usage$(RESET): make <target> [key=value ...]"
 	@echo ""
-	
+
+check-env:
+	@if [ ! -f .env ]; then \
+		echo "❌ Error: .env file not found!"; \
+		exit 1; \
+	fi
 
 # 	example: ## Example command with args [requiredArg] [optionalArg=defaultVal]
 #		@echo "Required arg: $(arg)"

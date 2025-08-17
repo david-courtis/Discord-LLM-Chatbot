@@ -1,13 +1,15 @@
 # bot/bot.py
-import discord
-from discord.ext import commands
 from typing import Dict
 
+import discord
+from discord.ext import commands
+
 from ..config.config import Config
-from .message_handler import MessageHandler
 from .activity_handler import ActivityHandler
 from .command_handler import CommandHandler
 from .fun_commands import FunCommands
+from .message_handler import MessageHandler
+
 
 class MyBot(commands.Bot):
     def __init__(self, config: Config):
@@ -40,13 +42,15 @@ class MyBot(commands.Bot):
         if message.author == self.user or not message.content.strip():
             return
 
-        print(f'Message from { message.author}, {message.guild}, {message.channel}: {message.content}')
+        print(
+            f"Message from { message.author}, {message.guild}, {message.channel}: {message.content}"
+        )
 
         # Handle fun commands
-        if message.content.startswith('!chubmeter'):
+        if message.content.startswith("!chubmeter"):
             await self.fun_commands.chubcheck(message)
             return
-        elif message.content.startswith('!chugmeter'):
+        elif message.content.startswith("!chugmeter"):
             await self.fun_commands.chugmeter(message)
             return
 

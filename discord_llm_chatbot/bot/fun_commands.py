@@ -1,7 +1,9 @@
 # bot/fun_commands.py
 import random
+
 import numpy as np
 from scipy.stats import triang
+
 
 class FunCommands:
     def __init__(self, bot):
@@ -24,7 +26,9 @@ class FunCommands:
         raw_samples = tri_dist.rvs(size=1000)
         skew_factor = 0.1
         exp_skewed_samples = np.exp(-skew_factor * (raw_samples - loc) / scale)
-        normalized_samples = raw_samples * exp_skewed_samples / np.max(exp_skewed_samples)
+        normalized_samples = (
+            raw_samples * exp_skewed_samples / np.max(exp_skewed_samples)
+        )
         chug_time = int(np.random.choice(normalized_samples) * 100)
         response = f"{ nickname} chugs {chug_time}% of their drink! 🍺😈"
         await message.channel.send(response)

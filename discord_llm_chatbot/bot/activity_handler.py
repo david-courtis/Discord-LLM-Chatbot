@@ -1,9 +1,11 @@
 # bot/activity_handler.py
 import asyncio
 import threading
+
 import discord
 
 from .activities import ActivityManager
+
 
 class ActivityHandler:
     def __init__(self, bot):
@@ -23,7 +25,9 @@ class ActivityHandler:
 
     def schedule_next_activity_update(self):
         """Schedules the next activity update."""
-        timer = threading.Timer(self.bot.config.ACTIVITY_TIMER, self.threaded_activity_update)
+        timer = threading.Timer(
+            self.bot.config.ACTIVITY_TIMER, self.threaded_activity_update
+        )
         timer.daemon = True
         timer.start()
 
@@ -35,4 +39,6 @@ class ActivityHandler:
     async def set_random_activity(self):
         """Sets a random activity for the bot."""
         activity_type, action = self.activity_manager.get_random_activity()
-        await self.bot.change_presence(activity=discord.Activity(type=activity_type, name=action))
+        await self.bot.change_presence(
+            activity=discord.Activity(type=activity_type, name=action)
+        )
