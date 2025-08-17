@@ -28,7 +28,7 @@ dependencies = [
 
 [project.scripts]
 # Run with `poetry run start`
-start = "discord_llm_chatbot.main:main"
+start-bot = "discord_llm_chatbot.main:main"
 
 [project.urls]
 Homepage = "https://github.com/luke-powell/Discord-LLM-Chatbot"

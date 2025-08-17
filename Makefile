@@ -2,6 +2,7 @@
 export PYTHONPYCACHEPREFIX := .cache/pycache
 
 # Colors
+RED	   := \033[1;31m
 YELLOW := \033[1;33m
 GREEN  := \033[1;32m
 CYAN   := \033[1;36m
@@ -19,17 +20,16 @@ start: ## Start the Discord bot
 	@echo "Checking environment..."
 	make check-env
 	@echo "Starting the Discord LLM Chatbot..."
-	poetry run start
+	poetry run start-bot
 
-clean: ## Remove virtualenv, centralized pycache, and any scattered __pycache__ dirs
+clean: ## Clean up pycache
 	@echo "Cleaning up..."
-	rm -rf .venv
-	rm -rf $(PYTHONPYCACHEPREFIX)
+	rm -rf ./.cache
 	find . -type d -name '__pycache__' -exec rm -rf {} +
 
 help: ## Show this help message
-	@echo ""
-	@echo "$(GREEN)Available commands:$(RESET)"
+	@printf '\n'
+	@printf '%b\n' "$(GREEN)Available commands:$(RESET)"
 	@awk '\
 		BEGIN {FS=":.*##"; target="";} \
 		/^[a-zA-Z0-9_.-]+:.*##/ { \
@@ -46,9 +46,9 @@ help: ## Show this help message
 		} \
 		/^[^#]/ { target=""; } \
 	' $(MAKEFILE_LIST)
-	@echo ""
-	@echo "$(GREEN)Usage$(RESET): make <target> [key=value ...]"
-	@echo ""
+	@printf '\n'
+	@printf '%b\n' "$(GREEN)Usage$(RESET): make <target> [key=value ...]"
+	@printf '\n'
 
 check-env:
 	@if [ ! -f .env ]; then \
