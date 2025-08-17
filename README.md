@@ -24,6 +24,7 @@ A discord bot that uses LLM API calls to generate responses to messages.
 
 ### Environment Setup
 * Clone the repo.
+* Open the project in VSCode and install the recommended VSCode extensions (Black formatter, ...).
 * Create `.env` under the root directory by copying `.env.template`.
 * Fill in the required environment variables.
     * `DISCORD_TOKEN` is your bot's Token. Get it from your Discord application's Bot settings -> Reset Token.
