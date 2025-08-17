@@ -13,9 +13,6 @@ A discord bot that uses LLM API calls to generate responses to messages.
 ## Requirements
 * [Python 3.11+](https://www.python.org/downloads/)
 * [Poetry](https://python-poetry.org/docs/)
-* Make
-    * [Windows](https://gnuwin32.sourceforge.net/packages/make.htm)
-    * Linux: `apt-get install make` or similar.
 * [Discord](https://discord.com/download)
 
 ## Setup instructions:
@@ -36,4 +33,7 @@ A discord bot that uses LLM API calls to generate responses to messages.
     * `OWNER_ID` is your Discord account's User ID. Get it by right-clicking your name in Discord -> Copy User ID.
 
 ### Startup
-* Run `make start` in the terminal.
+* Run `poetry install` to install python packages.
+    * Run `poetry add <package>` to add new packages.
+    * If intellisense is not picking up Python packages, then you may need to set your Python Project Environment in VSCode.
+* Run `poetry run start-bot` to start the Discord bot.
