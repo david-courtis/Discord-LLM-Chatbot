@@ -5,10 +5,11 @@ import threading
 import discord
 
 from .activities import ActivityManager
+from .bot import MyBot
 
 
 class ActivityHandler:
-    def __init__(self, bot):
+    def __init__(self, bot: MyBot):
         self.bot = bot
         self.activity_manager = ActivityManager()
         self.loop = None

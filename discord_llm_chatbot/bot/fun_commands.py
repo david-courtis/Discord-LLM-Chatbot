@@ -2,14 +2,17 @@
 import random
 
 import numpy as np
+from discord.message import Message
 from scipy.stats import triang
+
+from .bot import MyBot
 
 
 class FunCommands:
-    def __init__(self, bot):
+    def __init__(self, bot: MyBot):
         self.bot = bot
 
-    async def chubcheck(self, message):
+    async def chubcheck(self, message: Message):
         """Handles the chubcheck command."""
         nickname = message.author.display_name
         chub_percentage = random.randint(0, 100)
@@ -17,7 +20,7 @@ class FunCommands:
         response = f"{ nickname} is at {chub_percentage}% chub & {freak_percentage}% freak 👅💦"
         await message.channel.send(response)
 
-    async def chugmeter(self, message):
+    async def chugmeter(self, message: Message):
         """Handles the chugmeter command."""
         nickname = message.author.display_name
         loc, scale = 0.1, 0.9

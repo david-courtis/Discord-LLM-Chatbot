@@ -2,12 +2,15 @@
 from datetime import datetime
 from typing import Dict, List
 
+from discord.message import Message
+
 from ..utils.openai_client import OpenAIClient
 from ..utils.text_processor import TextProcessor
+from .bot import MyBot
 
 
 class MessageHandler:
-    def __init__(self, bot):
+    def __init__(self, bot: MyBot):
         self.bot = bot
         self.openai_client = OpenAIClient(bot.config)
         self.text_processor = TextProcessor()
@@ -23,7 +26,7 @@ class MessageHandler:
         # Initialize cache
         self.cache: Dict[str, list] = {}
 
-    async def handle_message(self, message):
+    async def handle_message(self, message: Message):
         """Main message handling logic."""
         ctx = await self.bot.get_context(message)
         if ctx.valid:
@@ -37,7 +40,9 @@ class MessageHandler:
 
         await self.handle_regular_message(message, server_channel, mentioned)
 
-    async def handle_regular_message(self, message, server_channel, mentioned):
+    async def handle_regular_message(
+        self, message: Message, server_channel: str, mentioned: bool
+    ):
         """Handles processing and responding to regular messages."""
         if server_channel not in self.cache:
             self.cache[server_channel] = []
@@ -73,7 +78,13 @@ class MessageHandler:
 
         await self.send_response(message, server_channel, mentioned, num_chars_cached)
 
-    async def send_response(self, message, server_channel, mentioned, num_chars_cached):
+    async def send_response(
+        self,
+        message: Message,
+        server_channel: str,
+        mentioned: bool,
+        num_chars_cached: int,
+    ):
         """Sends a response to a message."""
         await message.channel.typing()
 
@@ -104,7 +115,7 @@ class MessageHandler:
             chunk = uwud[i : i + self.discord_character_limit]
             await message.channel.send(chunk, reference=message if mentioned else None)
 
-    def prepare_messages(self, server_channel) -> List[Dict[str, str]]:
+    def prepare_messages(self, server_channel: str) -> List[Dict[str, str]]:
         """Prepares messages for the AI model."""
         messages = [
             {
@@ -120,4 +131,5 @@ class MessageHandler:
             if item[3]:
                 content += f' (replying to "{ item[3]}")'
             messages.append({"role": role, "content": content})
+
         return messages
