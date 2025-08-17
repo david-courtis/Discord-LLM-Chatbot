@@ -1,7 +1,7 @@
 # bot/activities.py
 import discord
 import random
-from typing import List, Tuple, Dict, Any
+from typing import Tuple
 
 class ActivityManager:
     def __init__(self):

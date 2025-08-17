@@ -1,8 +1,9 @@
 # bot/message_handler.py
 from datetime import datetime
-from utils.openai_client import OpenAIClient
-from utils.text_processor import TextProcessor
 from typing import List, Dict
+
+from ..utils.openai_client import OpenAIClient
+from ..utils.text_processor import TextProcessor
 
 class MessageHandler:
     def __init__(self, bot):

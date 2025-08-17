@@ -19,7 +19,7 @@ This list is outdated and needs to be updated (WIP) (12/13/2024)
 
 ```
 DISCORD_TOKEN=<your discord bot token>
-API_KEY=<your openai api key>
+OPENAI_API_KEY=<your openai api key>
 ```
 
 * Run the bot with the command above.
