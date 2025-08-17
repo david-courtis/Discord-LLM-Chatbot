@@ -2,7 +2,8 @@
 import asyncio
 import threading
 import discord
-from bot.activities import ActivityManager
+
+from .activities import ActivityManager
 
 class ActivityHandler:
     def __init__(self, bot):

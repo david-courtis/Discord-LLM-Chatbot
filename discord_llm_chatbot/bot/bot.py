@@ -3,11 +3,11 @@ import discord
 from discord.ext import commands
 from typing import Dict
 
-from config.config import Config
-from bot.message_handler import MessageHandler
-from bot.activity_handler import ActivityHandler
-from bot.command_handler import CommandHandler
-from bot.fun_commands import FunCommands
+from ..config.config import Config
+from .message_handler import MessageHandler
+from .activity_handler import ActivityHandler
+from .command_handler import CommandHandler
+from .fun_commands import FunCommands
 
 class MyBot(commands.Bot):
     def __init__(self, config: Config):

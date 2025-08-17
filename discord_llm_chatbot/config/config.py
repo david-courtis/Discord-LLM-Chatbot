@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 @dataclass
 class Config:
     DISCORD_TOKEN: str
-    API_KEY: str
+    OPENAI_API_KEY: str
     DESIGNATED_CHANNELS: List[int]
     GUILD_TEST_ID: str
     OWNER_ID: str
@@ -29,8 +29,8 @@ def load_config() -> Config:
     try:
         return Config(
             DISCORD_TOKEN=os.getenv('DISCORD_TOKEN'),
-            API_KEY=os.getenv('API_KEY'),
-            DESIGNATED_CHANNELS=[int(channel) for channel in os.getenv("DESIGNATED_CHANNELS").split(", ")],
+            OPENAI_API_KEY=os.getenv('OPENAI_API_KEY'),
+            DESIGNATED_CHANNELS=[int(channel.strip()) for channel in os.getenv("DESIGNATED_CHANNELS").split(",")],
             GUILD_TEST_ID=os.getenv("GUILD_TEST_ID"),
             OWNER_ID=os.getenv("OWNER_ID"),
             LOCAL_CLIENT_URL=os.getenv("LOCAL_CLIENT_URL", ""),

@@ -1,8 +1,9 @@
 # main.py
 import asyncio
-from bot.bot import MyBot
-from config.config import load_config
-from utils.logger import setup_logger
+from .bot.bot import MyBot
+from .config.config import load_config
+from .utils.logger import setup_logger
+
 
 def main():
     # Setup logging
@@ -23,6 +24,7 @@ def main():
         raise
     finally:
         asyncio.run(bot.close())
+
 
 if __name__ == "__main__":
     main()

@@ -1,0 +1,44 @@
+[project]
+name = "discord-llm-chatbot"
+version = "0.1.0"
+description = "Discord chatbot powered by LLM"
+authors = [
+    { name = "Luke", email = "lukebpowell@gmail.com" }
+]
+readme = "README.md"
+requires-python = ">=3.11,<4.0"
+keywords = ["discord", "chatbot", "openai", "llm"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Topic :: Communications :: Chat",
+]
+
+
+dependencies = [
+  "discord.py>=2.2,<3.0",
+  "python-dotenv>=1.0,<2.0",
+  "openai>=1.0,<2.0",
+  "numpy>=1.26,<3.0",
+  "scipy>=1.11,<2.0",
+  "uwuify>=1.3,<2.0",
+]
+
+[project.scripts]
+# Run with `poetry run vivi` or `vivi`
+start = "discord_llm_chatbot.main:main"
+
+[project.urls]
+Homepage = "https://github.com/luke-powell/Discord-LLM-Chatbot"
+Repository = "https://github.com/luke-powell/Discord-LLM-Chatbot"
+
+[tool.poetry]
+packages = [
+  { include = "discord_llm_chatbot" }
+]
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
