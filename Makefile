@@ -15,7 +15,7 @@ install: ## Install/update necessary Python packages
 	@echo "Installing dependencies..."
 	poetry install
 
-start: install ## Start the Discord bot
+start: ## Start the Discord bot
 	@echo "Checking environment..."
 	make check-env
 	@echo "Starting the Discord LLM Chatbot..."

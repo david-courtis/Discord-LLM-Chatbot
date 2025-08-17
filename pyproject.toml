@@ -27,7 +27,7 @@ dependencies = [
 ]
 
 [project.scripts]
-# Run with `poetry run vivi` or `vivi`
+# Run with `poetry run start`
 start = "discord_llm_chatbot.main:main"
 
 [project.urls]
