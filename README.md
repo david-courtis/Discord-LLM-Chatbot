@@ -11,9 +11,12 @@ A discord bot that uses LLM API calls to generate responses to messages.
 * Uses OpenAI's completion API to generate responses.
 
 ## Requirements
-* Python 3.11+
+* [Python 3.11+](https://www.python.org/downloads/)
+* [Poetry](https://python-poetry.org/docs/)
 * Make
-* Discord
+    * [Windows](https://gnuwin32.sourceforge.net/packages/make.htm)
+    * Linux: `apt-get install make` or similar.
+* [Discord](https://discord.com/download)
 
 ## Setup instructions:
 
