@@ -1,4 +1,5 @@
 # bot/fun_commands.py
+import asyncio
 import random
 from typing import TYPE_CHECKING
 
@@ -17,10 +18,18 @@ class FunCommands:
     async def chubcheck(self, message: Message):
         """Handles the chubcheck command."""
         nickname = message.author.display_name
-        chub_percentage = random.randint(0, 100)
-        freak_percentage = random.randint(0, 100)
-        response = f"{ nickname} is at {chub_percentage}% chub & {freak_percentage}% freak 👅💦"
-        await message.channel.send(response)
+
+        def check_carl_response(m):
+            return m.author.name == "Carl-bot" and m.author.discriminator == "1536" and m.channel == message.channel
+
+        try:
+            await self.wait_for('message', check=check_carl_response, timeout=3)
+            return
+        except asyncio.TimeoutError:
+            chub_percentage = random.randint(0, 100)
+            freak_percentage = random.randint(0, 100)
+            response = f"{nickname} is at {chub_percentage}% chub & {freak_percentage}% freak 👅💦"
+            await message.channel.send(response)
 
     async def chugmeter(self, message: Message):
         """Handles the chugmeter command."""
