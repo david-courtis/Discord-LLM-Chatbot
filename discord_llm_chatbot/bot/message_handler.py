@@ -1,16 +1,18 @@
 # bot/message_handler.py
 from datetime import datetime
-from typing import Dict, List
+from typing import TYPE_CHECKING, Dict, List
 
 from discord.message import Message
 
 from ..utils.openai_client import OpenAIClient
 from ..utils.text_processor import TextProcessor
-from .bot import MyBot
+
+if TYPE_CHECKING:
+    from .bot import MyBot
 
 
 class MessageHandler:
-    def __init__(self, bot: MyBot):
+    def __init__(self, bot: "MyBot"):
         self.bot = bot
         self.openai_client = OpenAIClient(bot.config)
         self.text_processor = TextProcessor()
@@ -126,10 +128,11 @@ class MessageHandler:
         ]
 
         for item in self.cache[server_channel]:
-            role = "assistant" if item[1] == self.bot.user else "user"
-            content = f"{ item[2]} -sent by {item[1]}"
-            if item[3]:
-                content += f' (replying to "{ item[3]}")'
+            [user, time, content, replied_to] = item
+            role = "assistant" if user == self.bot.user else "user"
+            content = f"{content} -sent by {user}"
+            if replied_to:
+                content += f' (replying to "{replied_to}")'
             messages.append({"role": role, "content": content})
 
         return messages

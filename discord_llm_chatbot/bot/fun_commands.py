@@ -1,15 +1,17 @@
 # bot/fun_commands.py
 import random
+from typing import TYPE_CHECKING
 
 import numpy as np
 from discord.message import Message
 from scipy.stats import triang
 
-from .bot import MyBot
+if TYPE_CHECKING:
+    from .bot import MyBot
 
 
 class FunCommands:
-    def __init__(self, bot: MyBot):
+    def __init__(self, bot: "MyBot"):
         self.bot = bot
 
     async def chubcheck(self, message: Message):

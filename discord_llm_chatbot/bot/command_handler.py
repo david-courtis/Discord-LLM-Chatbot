@@ -1,10 +1,13 @@
+from typing import TYPE_CHECKING
+
 from discord.ext.commands import Context
 
-from .bot import MyBot
+if TYPE_CHECKING:
+    from .bot import MyBot
 
 
 class CommandHandler:
-    def __init__(self, bot: MyBot):
+    def __init__(self, bot: "MyBot"):
         self.bot = bot
 
     def setup_commands(self):
@@ -45,4 +48,5 @@ class CommandHandler:
 
     async def say_creator(self, ctx: Context):
         """Sends a message with the bot creator's info."""
+        await ctx.send(f"I was created by <@!{ self.config.OWNER_ID}>!")
         await ctx.send(f"I was created by <@!{ self.config.OWNER_ID}>!")
