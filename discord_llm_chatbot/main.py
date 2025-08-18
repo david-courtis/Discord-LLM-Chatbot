@@ -5,14 +5,23 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
+import sys
+
+import jurigged
+
 from .bot.bot import MyBot
 from .config.config import load_config
 from .utils.logger import setup_logger
 
+logger = setup_logger()
+
 
 def main():
-    # Setup logging
-    logger = setup_logger()
+    logger.info("Starting bot...")
+
+    if "--watch" in sys.argv:
+        logger.info("Starting file watcher...")
+        jurigged.watch("discord_llm_chatbot/")
 
     # Load configuration
     config = load_config()
