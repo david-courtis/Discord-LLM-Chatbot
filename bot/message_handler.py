@@ -25,7 +25,8 @@ class MessageHandler:
         self.bot = bot
         self.openai_client = OpenAIClient(bot.config)
         self.text_processor = TextProcessor()
-        self.reply_to_keywords = ["why", "what", "how", "?", "wtf", "huh"]
+        # self.reply_to_keywords = ["why", "what", "how", "?", "wtf", "huh"]
+        self.reply_to_keywords = []
         self.smiley = True
 
         # Add these properties from config
@@ -33,9 +34,6 @@ class MessageHandler:
         self.send_limit = bot.config.SEND_LIMIT
         self.discord_character_limit = bot.config.DISCORD_CHARACTER_LIMIT
         self.designated_channels = bot.config.DESIGNATED_CHANNELS
-
-        # Initialize cache
-        self.cache: Dict[str, list] = {}
 
     async def handle_message(self, message):
         """Main message handling logic."""
@@ -53,14 +51,14 @@ class MessageHandler:
 
     async def handle_regular_message(self, message, server_channel, mentioned):
         """Handles processing and responding to regular messages."""
-        if server_channel not in self.cache:
-            self.cache[server_channel] = []
+        if server_channel not in self.bot.cache:
+            self.bot.cache[server_channel] = []
 
         # Extract images from the current message
         image_urls = await self.extract_image_urls(message)
 
         # Append the new message to the cache
-        self.cache[server_channel].append([
+        self.bot.cache[server_channel].append([
             message.created_at,
             message.author,
             message.content,
@@ -71,7 +69,7 @@ class MessageHandler:
         # Trim cached images to respect the max image cache limit
         self.trim_cached_images(server_channel)
 
-        num_chars_cached = sum(len(msg[2]) for msg in self.cache[server_channel])
+        num_chars_cached = sum(len(msg[2]) for msg in self.bot.cache[server_channel])
 
         should_respond = (
             mentioned or
@@ -91,8 +89,8 @@ class MessageHandler:
         total_images = 0
 
         # Traverse the cache backward to retain the most recent images
-        for i in range(len(self.cache[server_channel]) - 1, -1, -1):
-            message = self.cache[server_channel][i]
+        for i in range(len(self.bot.cache[server_channel]) - 1, -1, -1):
+            message = self.bot.cache[server_channel][i]
             image_count = len(message[4])  # Image URLs are stored in the 5th element
 
             total_images += image_count
@@ -112,8 +110,8 @@ class MessageHandler:
 
         # Trim cache if needed
         while num_chars_cached > self.send_limit:
-            num_chars_cached -= len(self.cache[server_channel][0][2])
-            self.cache[server_channel].pop(0)
+            num_chars_cached -= len(self.bot.cache[server_channel][0][2])
+            self.bot.cache[server_channel].pop(0)
 
         # Prepare messages
         messages = self.prepare_messages(server_channel, message)
@@ -125,7 +123,7 @@ class MessageHandler:
 
         # Update cache with the clean message
         time = datetime.now()
-        self.cache[server_channel].append([
+        self.bot.cache[server_channel].append([
             time,
             self.bot.user,
             text,
@@ -168,7 +166,7 @@ class MessageHandler:
         ]
 
         # Add cached messages
-        for item in self.cache[server_channel]:
+        for item in self.bot.cache[server_channel]:
             role = "assistant" if item[1] == self.bot.user else "user"
             content = []
 

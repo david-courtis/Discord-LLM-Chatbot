@@ -33,6 +33,7 @@ class MyBot(commands.Bot):
     async def on_ready(self):
         """Called when the bot is ready and connected to Discord."""
         print(f"Logged in as { self.user}!")
+        await self.tree.sync()
         await self.activity_handler.start()
 
     async def on_message(self, message):
