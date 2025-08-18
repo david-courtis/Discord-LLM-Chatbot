@@ -3,10 +3,12 @@ name = "discord-llm-chatbot"
 version = "0.1.0"
 description = "Discord chatbot powered by LLM"
 authors = [
-    { name = "Luke", email = "lukebpowell@gmail.com" }
+    { name = "Luke", email = "lukebpowell@gmail.com" },
+    { name = "David", email = "david.courtis1@gmail.com" },
+    { name = "Kora", email = "koraloudermilk@gmail.com" },
 ]
 readme = "README.md"
-requires-python = ">=3.11,<4.0"
+requires-python = "==3.11.*"
 keywords = ["discord", "chatbot", "openai", "llm"]
 classifiers = [
   "Programming Language :: Python :: 3",
