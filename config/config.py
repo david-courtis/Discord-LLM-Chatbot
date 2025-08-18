@@ -19,6 +19,7 @@ class Config:
     DISCORD_CHARACTER_LIMIT: int = 2000
     MESSAGE_THRESHOLD: int = 5000
     SEND_LIMIT: int = 10000
+    MAX_CACHED_IMAGES: int = 10
 
 def load_config() -> Config:
     try:
