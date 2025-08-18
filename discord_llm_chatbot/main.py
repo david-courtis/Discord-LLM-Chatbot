@@ -1,6 +1,10 @@
 # main.py
 import asyncio
 
+from dotenv import load_dotenv
+
+load_dotenv()
+
 from .bot.bot import MyBot
 from .config.config import load_config
 from .utils.logger import setup_logger

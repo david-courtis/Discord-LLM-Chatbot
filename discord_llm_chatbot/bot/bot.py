@@ -9,7 +9,7 @@ from ..config.config import Config
 from .activity_handler import ActivityHandler
 from .command_handler import CommandHandler
 from .fun_commands import FunCommands
-from .message_handler import MessageHandler
+from .message_handler_pydantic import MessageHandler
 
 
 class MyBot(Bot):
