@@ -128,11 +128,10 @@ class MessageHandler:
         ]
 
         for item in self.cache[server_channel]:
-            [user, time, content, replied_to] = item
-            role = "assistant" if user == self.bot.user else "user"
-            content = f"{content} -sent by {user}"
-            if replied_to:
-                content += f' (replying to "{replied_to}")'
+            role = "assistant" if item[1] == self.bot.user else "user"
+            content = f"{ item[2]} -sent by {item[1]}"
+            if item[3]:
+                content += f' (replying to "{ item[3]}")'
             messages.append({"role": role, "content": content})
 
         return messages
