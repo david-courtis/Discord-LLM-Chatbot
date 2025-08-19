@@ -1,7 +1,9 @@
 # utils/text_processor.py
 import re
+from typing import Dict, Optional
+
 import uwuify
-from typing import Optional, Dict
+
 
 class TextProcessor:
     @staticmethod
@@ -27,12 +29,22 @@ class TextProcessor:
 
         # Fallback to original cleanup if parsing fails
         text = re.sub(r".(r|R)eplying to\s?.*", "", text)
-        text = re.sub(r"[-–(]\s?(?:sent\sby\s)?\"?(v|V)i\s?(v|V)i(#5153)?\"?(:|)\s?[^\s]*\s?", "", text)
+
+        # Remove -sent by %USERNAME "anything" space in regex
+        text = re.sub(
+            r"[-–(]\s?(?:sent\sby\s)?\"?(v|V)i\s?(v|V)i(#5153)?\"?(:|)\s?[^\s]*\s?",
+            "",
+            text,
+        )
+
+        # Remove digits
         text = re.sub(r"#[0-9][0-9][0-9][0-9]", "", text)
         return text
 
     @staticmethod
-    def uwuify_text(text: str, message_content: Optional[str] = None, smiley: bool = True) -> str:
+    def uwuify_text(
+        text: str, message_content: Optional[str] = None, smiley: bool = True
+    ) -> str:
         if message_content and "uwu" in message_content.lower():
             flags = uwuify.SMILEY | uwuify.YU | uwuify.STUTTER
         elif smiley:

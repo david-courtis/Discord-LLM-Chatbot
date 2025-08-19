@@ -1,9 +1,14 @@
 from datetime import datetime
-from utils.openai_client import OpenAIClient
-from utils.text_processor import TextProcessor
-from typing import List, Dict
+from typing import TYPE_CHECKING, Dict, List
+
 import aiohttp
-import re
+from discord.message import Message
+
+from ..utils.openai_client import OpenAIClient
+from ..utils.text_processor import TextProcessor
+
+if TYPE_CHECKING:
+    from .bot import MyBot
 
 async def is_valid_image_url(url: str) -> bool:
     """Check if the given image URL is valid and accessible."""
@@ -18,10 +23,8 @@ async def is_valid_image_url(url: str) -> bool:
         print(f"Error validating image URL: {url}, {e}")
     return False
 
-
-
 class MessageHandler:
-    def __init__(self, bot):
+    def __init__(self, bot: "MyBot"):
         self.bot = bot
         self.openai_client = OpenAIClient(bot.config)
         self.text_processor = TextProcessor()
@@ -35,7 +38,7 @@ class MessageHandler:
         self.discord_character_limit = bot.config.DISCORD_CHARACTER_LIMIT
         self.designated_channels = bot.config.DESIGNATED_CHANNELS
 
-    async def handle_message(self, message):
+    async def handle_message(self, message: Message):
         """Main message handling logic."""
         ctx = await self.bot.get_context(message)
         if ctx.valid:
@@ -49,7 +52,9 @@ class MessageHandler:
 
         await self.handle_regular_message(message, server_channel, mentioned)
 
-    async def handle_regular_message(self, message, server_channel, mentioned):
+    async def handle_regular_message(
+        self, message: Message, server_channel: str, mentioned: bool
+    ):
         """Handles processing and responding to regular messages."""
         if server_channel not in self.bot.cache:
             self.bot.cache[server_channel] = []
@@ -57,14 +62,19 @@ class MessageHandler:
         # Extract images from the current message
         image_urls = await self.extract_image_urls(message)
 
-        # Append the new message to the cache
-        self.bot.cache[server_channel].append([
-            message.created_at,
-            message.author,
-            message.content,
-            message.reference.resolved.author if message.reference and message.reference.resolved else None,
-            image_urls
-        ])
+        self.bot.cache[server_channel].append(
+            [
+                message.created_at,
+                message.author,
+                message.content,
+                (
+                    message.reference.resolved.author
+                    if message.reference and message.reference.resolved
+                    else None
+                ),
+                image_urls,
+            ]
+        )
 
         # Trim cached images to respect the max image cache limit
         self.trim_cached_images(server_channel)
@@ -72,10 +82,14 @@ class MessageHandler:
         num_chars_cached = sum(len(msg[2]) for msg in self.bot.cache[server_channel])
 
         should_respond = (
-            mentioned or
-            (num_chars_cached > self.threshold and
-             any(word in message.content.lower() for word in self.reply_to_keywords)) and
-            int(message.channel.id) in self.designated_channels
+            mentioned
+            or (
+                num_chars_cached > self.threshold
+                and any(
+                    word in message.content.lower() for word in self.reply_to_keywords
+                )
+            )
+            and int(message.channel.id) in self.designated_channels
         )
 
         if not should_respond:
@@ -83,7 +97,7 @@ class MessageHandler:
 
         await self.send_response(message, server_channel, mentioned, num_chars_cached)
 
-    def trim_cached_images(self, server_channel):
+    def trim_cached_images(self, server_channel: str):
         """Trim cached messages to ensure the total number of images does not exceed the limit."""
         max_images = self.bot.config.MAX_CACHED_IMAGES
         total_images = 0
@@ -104,7 +118,13 @@ class MessageHandler:
             if total_images <= max_images:
                 break
 
-    async def send_response(self, message, server_channel, mentioned, num_chars_cached):
+    async def send_response(
+        self,
+        message: Message,
+        server_channel: str,
+        mentioned: bool,
+        num_chars_cached: int,
+    ):
         """Sends a response to a message."""
         await message.channel.typing()
 
@@ -123,23 +143,16 @@ class MessageHandler:
 
         # Update cache with the clean message
         time = datetime.now()
-        self.bot.cache[server_channel].append([
-            time,
-            self.bot.user,
-            text,
-            message.author if mentioned else None,
-            None
-        ])
+        self.bot.cache[server_channel].append(
+            [time, self.bot.user, text, message.author if mentioned else None, None]
+        )
 
         # Send response in chunks if needed
         for i in range(0, len(uwud), self.discord_character_limit):
-            chunk = uwud[i:i + self.discord_character_limit]
-            await message.channel.send(
-                chunk,
-                reference=message if mentioned else None
-            )
+            chunk = uwud[i : i + self.discord_character_limit]
+            await message.channel.send(chunk, reference=message if mentioned else None)
 
-    async def extract_image_urls(self, message) -> List[str]:
+    async def extract_image_urls(self, message: Message) -> List[str]:
         """Extract and validate image URLs from a Discord message."""
         image_urls = []
         if message.attachments:
@@ -156,7 +169,7 @@ class MessageHandler:
 
         return image_urls
 
-    def prepare_messages(self, server_channel, message) -> List[Dict[str, str]]:
+    def prepare_messages(self, server_channel: str, message: Message) -> List[Dict[str, str]]:
         """Prepares messages for the AI model."""
         messages = [
             {
