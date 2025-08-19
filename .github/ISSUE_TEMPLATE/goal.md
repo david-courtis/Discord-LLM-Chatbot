@@ -1,6 +1,6 @@
 ---
 name: Goal
-about: Describe this issue template's purpose here.
+about: TODO Items
 title: "[Goal] <short description>"
 labels: feature
 assignees: ''
