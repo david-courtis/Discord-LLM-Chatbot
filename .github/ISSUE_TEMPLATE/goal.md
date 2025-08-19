@@ -2,16 +2,13 @@
 name: Goal
 about: Describe this issue template's purpose here.
 title: "[Goal] <short description>"
-labels: ''
+labels: feature
 assignees: ''
 
 ---
 
-## Goal
+## Description
 Briefly describe the goal in one sentence.
-
-## Details
-Why is this important? What’s the context?
 
 ## Deliverables
 - [ ] Key outcome 1 
